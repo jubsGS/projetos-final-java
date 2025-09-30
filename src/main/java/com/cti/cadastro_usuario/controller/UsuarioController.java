@@ -1,8 +1,9 @@
 package com.cti.cadastro_usuario.controller;
 
 import com.cti.cadastro_usuario.business.UsuarioService;
-import com.cti.cadastro_usuario.infrastructure.entities.Usuario;
+import com.cti.cadastro_usuario.infrastructure.entitys.Usuario;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.id.uuid.UuidGenerator;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +14,9 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @PostMapping
-    public ResponseEntity<Void> salvarUsuario(@RequestBody Usuario usuario){
+    public ResponseEntity<Usuario> salvarUsuario(@RequestBody Usuario usuario){
         usuarioService.salvarUsuario(usuario);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(usuario);
     }
 
     @GetMapping

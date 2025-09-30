@@ -1,4 +1,4 @@
-package com.cti.cadastro_usuario.infrastructure.entities;
+package com.cti.cadastro_usuario.infrastructure.entitys;
 
 import jakarta.persistence.*;
 import lombok.*;
