@@ -1,10 +1,115 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Biblioteca - CRUD de Livros</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-$END$
+<h1>📚 Biblioteca - CRUD de Livros</h1>
+
+<h2>Cadastrar Livro</h2>
+<input type="text" id="nome" placeholder="Nome do Livro">
+<input type="text" id="autor" placeholder="Autor">
+<input type="text" id="editora" placeholder="Editora">
+<input type="text" id="genero" placeholder="Gênero">
+<button onclick="criarLivro()">Cadastrar</button>
+
+<h2>Lista de Livros</h2>
+<button onclick="listarLivros()">🔄 Atualizar Lista</button>
+<table id="tabelaLivros">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Autor</th>
+        <th>Editora</th>
+        <th>Gênero</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    const API_URL = "http://localhost:8080/livros";
+
+    // Cadastrar livro
+    function criarLivro() {
+        const livro = {
+            nome: document.getElementById("nome").value,
+            autor: document.getElementById("autor").value,
+            editora: document.getElementById("editora").value,
+            genero: document.getElementById("genero").value
+        };
+
+        fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(livro)
+        }).then(() => {
+            listarLivros();
+            limparCampos();
+        });
+    }
+
+    // Listar livros
+    function listarLivros() {
+        fetch(API_URL)
+            .then(response => response.json())
+            .then(livros => {
+                const tbody = document.querySelector("#tabelaLivros tbody");
+                tbody.innerHTML = "";
+                livros.forEach(livro => {
+                    const row = `
+                        <tr>
+                            <td>${livro.id}</td>
+                            <td>${livro.nome}</td>
+                            <td>${livro.autor}</td>
+                            <td>${livro.editora}</td>
+                            <td>${livro.genero}</td>
+                            <td>
+                                <button onclick="atualizarLivro(${livro.id})">✏️ Editar</button>
+                                <button onclick="deletarLivro(${livro.id})">❌ Excluir</button>
+                            </td>
+                        </tr>`;
+                    tbody.innerHTML += row;
+                });
+            });
+    }
+
+    // Atualizar livro (simples: usa prompt)
+    function atualizarLivro(id) {
+        const nome = prompt("Novo nome:");
+        const autor = prompt("Novo autor:");
+        const editora = prompt("Nova editora:");
+        const genero = prompt("Novo gênero:");
+
+        const livro = { id, nome, autor, editora, genero };
+
+        fetch(`${API_URL}/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(livro)
+        }).then(() => listarLivros());
+    }
+
+    // Deletar livro
+    function deletarLivro(id) {
+        fetch(`${API_URL}/${id}`, { method: "DELETE" })
+            .then(() => listarLivros());
+    }
+
+    // Limpar campos
+    function limparCampos() {
+        document.getElementById("nome").value = "";
+        document.getElementById("autor").value = "";
+        document.getElementById("editora").value = "";
+        document.getElementById("genero").value = "";
+    }
+
+    // Carregar lista inicial
+    listarLivros();
+</script>
 </body>
 </html>
